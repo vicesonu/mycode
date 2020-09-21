@@ -1,2 +1,2 @@
-# mycode
+ear mycode
 Python
