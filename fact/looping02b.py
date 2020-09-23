@@ -9,5 +9,4 @@ with open("dnsservers.txt", "r") as dnsfile:
     for svr in dnslist:
         #print and end without a newline
         print(svr, end="")
-# no need to close our file - closed automatically
-
+# no need to close our file - closed automaticallyi
