@@ -1,70 +1,159 @@
+import random
+import time
+
 #!/usr/bin/python3
+#Victors
+# Airborne vs Ranger game
 
- # Victors
- #  game Airborne vs Ranger game
-
-def showInstructions():
-  #print a main menu and the commands
-  print('''
-AirBorne
-========
-Commands:
-  go [direction]
-  get [item]
-''')
-
-#create the class
-
-class AirBorne:
-    def _init_(self, name,types,moves, EVs, health='================'):
-        # save variables as attributes
+class Player():
+    def __init__(self, name, types, moves, health, attack):
         self.name = name
-        self.types = types
+        self.health = 100
         self.moves = moves
-        self.inventory = inventory
-        self.health = health
-        self.attack= EVs['ATTACK']
-        self.defense = EVs['DEFENSE']
+        self.attack = attack
+        self.types = types
+        self.wins = 0
 
-    def fight(self, Ranger):
- # Allowing two soldiers fight
+    def injury(self, injury, Ranger):
+        if (injury > self.health):
+            overkill = abs(self.health - injury)
+            self.health = 0
+            if (overkill > 0):
+                print("{0} takes injury from {1}, with {2} overkill!"
+                      .format(self.name.capitalize(), Ranger, overkill))
+            else:
+                print("{0} takes injury from {1}!"
+                      .format(self.name.capitalize(), Ranger))
+        else:
+            self.health -= injury
+            print("{0} takes {1} injury from {2}!"
+                  .format(self.name.capitalize(), injury, Ranger))
 
- # Printing combat information
-    print("------FIGHT------")
-    print(f"\n{self.name}")
-    print("TYPE/", self.types)
-    print("ATTACK/", self.attack)
-    print("DEFENSE/",self.defense)
-    print("LvL/", 3*(1+np.mean([self.attack,self.defense])))
-    print("\nVS")
-    print(f"\n{Ranger.name}")
-    print("TYPE/", Ranger.types)
-    print("ATTACK/", Ranger.attack)
-    print("DEFENSE/",Ranger.defense)
-    print("LvL/", 3*(1+np.mean([Ranger.attack,Ranger.defense])))
-
-    time.sleep(3)
+    def Recovery(self, Recovery):
+        if (Recovery + self.health > 100):
+            self.health = 100
+            print("{0} Recovers back full health!"
+                  .format(self.name.capitalize()))
+        else:
+            self.health += Recovery
+            print("{0} Recovers for {1}!"
+                  .format(self.name.capitalize(), Recovery))
 
 
-#Consider diabolical puzzle
-Weapons =['Grenade','Gun', 'Knife']
-for i,k in enumerate(version):
-    if self.types == k:
-        if Ranger.types == k:
-            String_1_attack = 'Fire'
-            String_2_attack = 'Fire'
+def parse_int(input):
+    try:
+        int(input)
+        return True
+    except ValueError:
+        return False
 
-#Ranger has extra health
-while(self.weapon >0) and (Ranger.weapon >0):
-    #print the health of each fighter
-    print(f"{self.name}\t\tHLTH\t{self.health}")
-     print(f"{Ranger.name}\t\tHLTH\t{Ranger.health}\n")
 
-     print(f"Go {self.name}!")
-     for i, x in enumerate(self.moves):
-         print(f"{1+1}.", x)
-         index = int(input('pick a move: '))
-         delay_print(f"{self.name} used {move[index-1]}!")
-         time.sleep(1)
-         delay_print(string_1_attack)
+def get_selection():
+    valid_input = False
+    while (valid_input is False):
+        print()
+        choice = input("Method to Fight: ")
+        if (parse_int(method) is True):
+            return int(method)
+        else:
+            print("The input was invalid. Please try again.")
+
+
+def get_computer_selection(health):
+    print("wait")
+    time.sleep(1)
+
+    if (health <= 35):
+        # Have the computer heal ~50% of its turns when <= 35
+       result = random.randint(1, 6)
+       if (result % 2 == 0):
+            return 3
+       else:
+           return random.randint(1, 2)
+    elif (health == 100):
+        return random.randint(1, 2)
+    else:
+        return random.randint(1, 3)
+
+
+def each_segment(computer, human):
+    game_in_progress = True
+    current_player = computer
+
+    while game_in_progress:
+        # swap the current player each round
+        if (current_player == computer):
+            current_player = human
+        else:
+            current_player = computer
+
+        print()
+        print(
+            "You have {0} health remaining and the "
+            "computer has {1} health remaining."
+            .format(human.health, computer.health))
+        print()
+
+        if (current_player == human):
+            print("Moves:")
+            print("1) Dagger - Causes moderate damage.")
+            print("2) M4 - high or low damage, "
+                  "depending on your luck!")
+            move = get_selection()
+        else:
+            move = get_computer_selection(computer.health)
+
+        if (move == 1):
+            damage = random.randrange(18, 25)
+            if (current_player == human):
+                computer.calculate_damage(damage, human.name.capitalize())
+            else:
+                human.calculate_damage(damage, computer.name.capitalize())
+        elif (move == 2):
+            damage = random.randrange(10, 35)
+            if (current_player == human):
+                computer.calculate_damage(damage, human.name.capitalize())
+            else:
+                human.calculate_damage(damage, computer.name.capitalize())
+        elif (move == 3):
+            heal = random.randrange(18, 25)
+            current_player.calculate_heal(heal)
+        else:
+            print ("The input was not valid. Please select a choice again.")
+
+        if (human.health == 0):
+            print("Sorry, you lose!")
+            computer.wins += 1
+            game_in_progress = False
+
+        if (computer.health == 0):
+            print("Congratulations, you beat the computer!")
+            human.wins += 1
+            game_in_progress = False
+
+
+def start_game():
+    print("Airborne Ranger!")
+
+    computer = Player("Computer")
+
+    name = input("Please enter your name: ")
+    human = Player(name)
+
+    keep_playing = True
+
+    while (keep_playing is True):
+        print("Current Score:")
+        print("You - {0}".format(human.wins))
+        print("Computer - {0}".format(computer.wins))
+
+        computer.health = 100
+        human.health = 100
+        play_round(computer, human)
+        print()
+        response = input("Play another round?(Y/N)")
+        if (response.lower() == "n"):
+            break
+
+start_game()
 
